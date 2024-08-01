@@ -12,7 +12,7 @@ let todos = [];
 app.post('/todos',(req,res)=>{
     const {title,description} = req.body;
     const newTodo = {
-        id:todos.length +1,
+        id: todos.length +1,
         title,
         description
     };
