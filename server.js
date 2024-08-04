@@ -21,7 +21,10 @@ mongoose.connect('mongodb://localhost:27017/mern-app')
 //Create a new todo Schema
 
 const todoSchema = new mongoose.Schema({
-    title:String,
+    title:{
+        required:true,
+        type : String
+    },
     description:String
 })
 //Create model
@@ -44,16 +47,33 @@ app.post('/todos',async (req,res)=>{
 
     }catch(error){
         console.log(error)
-        res.status(500);
+        res.status(500).json({message: error.message});
 
     }
 
 })
 
 //Get all items
-app.get('/todos',(req,res)=>{
-    res.json(todos);
+app.get('/todos', async (req,res)=>{
+    try{
+        const todos = await todoModel.find();
+        res.json(todos);
+    }catch(error){
+       console.log(error)
+       res.status(500).json({message:error.message});
+    }
+    
 } )
+//Update a todo item
+app.put("/todos/:id",(req,res)=>{
+    const {title,description} =req.body;
+    const id = req.params.id;
+    const updateTodo = todoModel.findByIdAndUpdate(
+        id,
+        {title ,description}
+    )
+    if (!update )
+})
 
 
 //start the server
