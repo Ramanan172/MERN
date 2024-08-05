@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 //create an instance of express
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 //Sample in-memory storage for item
 //let todos = [];
@@ -65,14 +65,38 @@ app.get('/todos', async (req,res)=>{
     
 } )
 //Update a todo item
-app.put("/todos/:id",(req,res)=>{
-    const {title,description} =req.body;
-    const id = req.params.id;
-    const updateTodo = todoModel.findByIdAndUpdate(
-        id,
-        {title ,description}
+app.put("/todos/:id", async (req,res)=>{
+    try{
+        const {title,description} =req.body;
+        const id = req.params.id;
+        const updatedTodo = await todoModel.findByIdAndUpdate(
+               id,
+              {title ,description},
+              {new:true}
     )
-    if (!update )
+    if (!updatedTodo ){
+        return res.status(404).json({ message:"Todo not found"})
+    }
+    res.json(updatedTodo)
+
+    }catch (error) {
+        console.log(error)
+        res.status(500).json({message:error.message});
+
+    }
+    
+})
+// Delete a to item
+app.delete('/todos/:id',async (req,res)=>{
+    try{
+        const id = req.params.id;
+         await todoModel.findByIdAndDelete(id);
+         res.status(204).end();
+    }catch (error){
+        console.log(error)
+        res.status(500).json({message:error.message});
+
+    }
 })
 
 
@@ -83,3 +107,4 @@ app.listen(port,()=>{
 })
 
 
+ 
