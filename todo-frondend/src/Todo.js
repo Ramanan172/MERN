@@ -7,6 +7,10 @@ export default function Todo(){
     const [error,setError] = useState("");
     const [message,setMessage] = useState("");
     const [editId,setEditId] = useState(-1);
+
+    //Edit
+    const [editTitle,setEditTitle] = useState("");
+    const [editDescription,setEditDescription] =useState("");
     const apiUrl = "http://localhost:8000";
 
   const handleSubmit = ()=>{
@@ -49,7 +53,13 @@ export default function Todo(){
         setTodos(res)
     })
  }
+ const handleEdit = ()=>{
+    setEditId(item._id);
+    setEditTitle(item.title);
+    setEditDescription(item.description)
 
+ }
+ const handleUpdate = () =>{}
 
    return <><div className="row p-3 bg-success text-light">
    <h1>TODO Project with MERN stack</h1>
@@ -70,17 +80,26 @@ export default function Todo(){
         {
             todos.map((item)=>
                 <li className="list-group-item bg-info d-flex justify-content-between align-items-center my-2">
-            <div className="d-flex flex-column">
+            <div className="d-flex flex-column me-2 ">
                 {
-                    editId !== -1 ?
+                    editId == -1  || editId !== item._id ? <>
+
+                      <span className="fw-bold">{item.title}</span>
+                      <span>{item.description}</span>
+                    </> : <>
+                    <div className="form-group d-flex gap-2">
+                        <input placeholder="Title" onChange={(e)=>setEditTitle(e.target.value) } value={title} className="form-control"  type="text"/>
+                         <input placeholder="Description" value={description} onChange={(e)=>setEditDescription(e.target.value)} className="form-control"  type="text"/>
+                        
+                    </div>
+                    </>
                 }
-            <span className="fw-bold">{item.title}</span>
-            <span>{item.description}</span>
+            
 
             </div>
             
             <div className="d-flex gap-2">
-               <button className="btn btn-warning" onClick={()=>setEditId(item._id)}>Edit</button>
+              { editId == -1 || editId !== item._id ? <button className="btn btn-warning" onClick={handleEdit} > Edit </button> : <button className="btn btn-warning" onClick={handleUpdate} >Update</button>}
                <button className="btn btn-danger">Delete</button>
             </div>
             
